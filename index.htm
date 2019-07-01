@@ -71,9 +71,9 @@
 
             var BulletDiary = function (date) {
                 this.date = date || new Date();
-                this.months[1].days = this.isLeapYear(date.getFullYear()) ? 29 : 28;
-                this.month = this.months[date.getMonth()];
-                this.first_day_of_week = (this.getFirstDayOfTheWeek(date.getFullYear(), date.getMonth()) + 7 - 1) % 7;
+                this.months[1].days = this.isLeapYear(this.date.getFullYear()) ? 29 : 28;
+                this.month = this.months[this.date.getMonth()];
+                this.first_day_of_week = (this.getFirstDayOfTheWeek(this.date.getFullYear(), this.date.getMonth()) + 7 - 1) % 7;
             };
 
             BulletDiary.prototype = {
