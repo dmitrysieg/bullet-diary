@@ -1,0 +1,212 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <style>
+            body {
+                height: 100%;
+                min-height: 100%;
+            }
+            table {
+                width: 297mm;
+                height: 210mm;
+            }
+            table, table th, table td {
+                border: 1px #cccccc dotted;
+                border-spacing: 0;
+                border-collapse: collapse;
+            }
+            table th.weekend {
+                background-color: orange;
+            }
+            table th.th-free {
+                border-bottom: none;
+            }
+            table tbody tr {
+                max-height: 4mm;
+            }
+            table tbody tr td.td-rest {
+                border-style: none;
+            }
+            table tbody tr td.td-free {
+                border-top: none;
+                border-bottom: none;
+            }
+            table tbody tr td.small {
+                height: 4mm;
+            }
+            table tbody tr td.small div {
+                height: 4mm;
+                font-size: 3mm;
+            }
+            table tbody tr td.td-header {
+                background-color: orange;
+                border-left: none;
+                border-right: none;
+            }
+            .th-corner {
+                width: 35mm;
+            }
+            .th-day {
+                width: 6mm;
+            }
+        </style>
+    </head>
+    <body>
+        <table>
+            <thead>
+                <tr id="th-row-upper">
+                    <th class="th-corner" rowspan="2">
+                        <span id="corner-caption"><!-- --></span>
+                    </th>
+                </tr>
+                <tr id="th-row-lower">
+                    <!-- -->
+                </tr>
+            </thead>
+            <tbody id="tbody">
+                <!-- -->
+            </tbody>
+        </table>
+        <script type="text/javascript">
+
+            var BulletDiary = function (date) {
+                this.date = date || new Date();
+                this.months[1].days = this.isLeapYear(date.getFullYear()) ? 29 : 28;
+                this.month = this.months[date.getMonth()];
+                this.first_day_of_week = (this.getFirstDayOfTheWeek(date.getFullYear(), date.getMonth()) + 7 - 1) % 7;
+            };
+
+            BulletDiary.prototype = {
+                w_days: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
+                months: [
+                    {name: "Январь", days: 31},
+                    {name: "Февраль", days: 29},
+                    {name: "Март", days: 31},
+                    {name: "Апрель", days: 30},
+                    {name: "Май", days: 31},
+                    {name: "Июнь", days: 30},
+                    {name: "Июль", days: 31},
+                    {name: "Август", days: 31},
+                    {name: "Сентябрь", days: 30},
+                    {name: "Октябрь", days: 31},
+                    {name: "Ноябрь", days: 30},
+                    {name: "Декабрь", days: 31}
+                ],
+                activities: [
+                    {name: 'First', header: true},
+                    {name: 'くぽくかく'},
+                    {name: 'ぽかく'},
+                    {name: 'ぽかくか'},
+                    {name: 'ぽかかかく', header: true},
+                    {name: 'ぽく'},
+                    {name: 'かぽかくぽぽ'},
+                    {name: 'сс'}
+                ],
+
+                isLeapYear: function (year) {
+                    return year % 4 == 0 ? (year % 100 ? (year % 400 ? true : false) : true) : false;
+                },
+                isWeekend: function (dayNum) {
+                    var day = (this.first_day_of_week + dayNum) % 7;
+                    return day == 5 || day == 6;
+                },
+                getDayOfWeekCaption: function (dayNum) {
+                    return this.w_days[(this.first_day_of_week + dayNum) % 7];
+                },
+                getCornerCaption: function () {
+                    return this.month.name + ' ' + this.date.getFullYear();
+                },
+                getFirstDayOfTheWeek: function (year, month) {
+                    var y = year - 1;
+                    var m = 11;
+                    var delta_days = 0;
+                    for (var i = 0; i < month; i++) {
+                        delta_days += this.months[i].days;
+                    }
+                    return (7000 + (1 + y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) + Math.floor((31 * m) / 12)) + delta_days) % 7;
+                }
+            };
+
+            var bulletDiary = new BulletDiary();
+
+            // Corner
+
+            document.getElementById('corner-caption').innerText = bulletDiary.getCornerCaption();
+
+            // Header
+
+            var th_row_upper = document.getElementById('th-row-upper');
+            var th_row_lower = document.getElementById('th-row-lower');
+
+            for (var i = 0; i < bulletDiary.month.days; i++) {
+                var th_day_cell_upper = document.createElement('th');
+                th_day_cell_upper.className = 'th-day' + (bulletDiary.isWeekend(i) ? ' weekend' : '');
+                th_day_cell_upper.innerText = bulletDiary.getDayOfWeekCaption(i);
+                th_row_upper.appendChild(th_day_cell_upper);
+
+                var th_day_cell_lower = document.createElement('th');
+                th_day_cell_lower.className = 'th-day' + (bulletDiary.isWeekend(i) ? ' weekend' : '');
+                th_day_cell_lower.innerText = (i + 1).toString();
+                th_row_lower.appendChild(th_day_cell_lower);
+            }
+
+            var th_free = document.createElement('th');
+            th_free.className = 'th-free';
+            th_free.setAttribute('rowspan', '2');
+            th_row_upper.appendChild(th_free);
+
+            // Activities
+
+            var tbody = document.getElementById('tbody');
+
+            for (var i = 0; i < bulletDiary.activities.length; i++) {
+
+                var tr = document.createElement('tr');
+                tbody.appendChild(tr);
+
+                var td_title = document.createElement('td');
+                td_title.className = 'small' + (bulletDiary.activities[i].header ? ' td-header' : '');
+                tr.appendChild(td_title);
+
+                var div_title = document.createElement('div');
+                div_title.innerText = bulletDiary.activities[i].name;
+                td_title.appendChild(div_title);
+
+                if (bulletDiary.activities[i].header) {
+                    for (var j = 0; j < bulletDiary.month.days + 1; j++) {
+                        var td = document.createElement('td');
+                        td.className = 'small';
+                        if (j == bulletDiary.month.days) {
+                            td.className += ' td-free';
+                        } else {
+                            td.className += ' td-header';
+                        }
+                        tr.appendChild(td);
+                    }
+                } else {
+                    for (var j = 0; j < bulletDiary.month.days + 1; j++) {
+                        var td = document.createElement('td');
+                        td.className = 'small';
+                        if (j == bulletDiary.month.days) {
+                            td.className += ' td-free';
+                        }
+                        tr.appendChild(td);
+                    }
+                }
+            }
+
+            var tr_rest = document.createElement('tr');
+            tbody.appendChild(tr_rest);
+
+            for (var j = 0; j < bulletDiary.month.days + 2; j++) {
+                var td_rest = document.createElement('td');
+                td_rest.className = 'td-rest';
+                tr_rest.appendChild(td_rest);
+                if (j == bulletDiary.month.days + 1) {
+                    td_rest.className = 'td-free';
+                }
+            }
+
+        </script>
+    </body>
+</html>
