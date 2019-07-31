@@ -52,6 +52,7 @@
         </style>
     </head>
     <body>
+        <script type="text/javascript" src="activities.js"><!-- --></script>
         <table>
             <thead>
                 <tr id="th-row-upper">
@@ -92,16 +93,7 @@
                     {name: "Ноябрь", days: 30},
                     {name: "Декабрь", days: 31}
                 ],
-                activities: [
-                    {name: 'First', header: true},
-                    {name: 'くぽくかく'},
-                    {name: 'ぽかく'},
-                    {name: 'ぽかくか'},
-                    {name: 'ぽかかかく', header: true},
-                    {name: 'ぽく'},
-                    {name: 'かぽかくぽぽ'},
-                    {name: 'сс'}
-                ],
+                activities: document.activities,
 
                 isLeapYear: function (year) {
                     return year % 4 == 0 ? (year % 100 ? (year % 400 ? true : false) : true) : false;
